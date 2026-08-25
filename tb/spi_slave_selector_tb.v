@@ -1,0 +1,65 @@
+module spi_slave_selector_tb;
+
+	reg	PCLK = 0;
+	reg	PRESET_n;
+	reg	mstr;
+	reg	send_data;
+	reg	spiswai;
+	reg	[1:0]	spi_mode;
+	wire	ss;
+	wire	tip;
+	wire	receive_data;
+	reg [11:0]	baudratedivisor;
+	
+	spi_slave_selector DUT(	PCLK,
+							PRESET_n,
+							mstr,
+							send_data,
+							spiswai,
+							spi_mode,
+							ss,
+							baudratedivisor,
+							tip,
+							receive_data);
+							
+	always #5 PCLK = ~PCLK;
+	
+	task reset;
+		begin
+			#10;
+			PRESET_n = 1'b0;
+			#10;
+			PRESET_n = 1'b1;
+		end
+	endtask
+	
+	task ss_generation;
+		begin
+			spi_mode = 2'b00;
+			send_data = 1'b1;
+			mstr = 1'b1;
+			spiswai = 1'b0;
+			baudratedivisor = 12'h4;
+			#10;
+			@(posedge PCLK);
+			send_data = 1'b0;
+		end
+	endtask
+	
+	task ss_generation_stop;
+		begin
+			spi_mode = 2'b10;
+			send_data = 1'b0;
+		end
+	endtask
+	
+	initial begin
+		reset;
+		#10;
+		ss_generation;
+		#420;
+		ss_generation_stop;
+		#200 $finish;
+	end
+
+endmodule
