@@ -179,7 +179,7 @@ module apb_slave_interface(input	PCLK,
 	assign modfen		=SPI_CR_2[4];
 	
 	//SPI Baud rate register fields
-	assign sppr_o	= SPI_BR[7:5];
+	assign sppr_o	= SPI_BR[6:4];
 	assign spr_o	= SPI_BR[2:0];
 	
 	//Detect Mode Fault
